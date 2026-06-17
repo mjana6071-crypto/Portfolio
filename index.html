@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jana 🩷 | Data Engineer & Frontend Developer</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+          },
+          colors: {
+            brand: {
+              light: '#FFF0F5',   // Lavender blush
+              pink: '#FF69B4',    // Hot pink
+              pastel: '#FFB6C1',  // Light pink
+              purple: '#8A2BE2',  // Blue violet
+              dark: '#0B0813',    // Deep magical space dark
+              card: 'rgba(20, 15, 35, 0.7)'
+            }
+          },
+          animation: {
+            'float-slow': 'float 8s ease-in-out infinite',
+            'float-delayed': 'float 12s ease-in-out infinite 2s',
+            'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+              '50%': { transform: 'translateY(-20px) rotate(5deg)' },
+            },
+            pulseSoft: {
+              '0%, 100%': { opacity: 0.8, transform: 'scale(1)' },
+              '50%': { opacity: 1, transform: 'scale(1.03)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #0B0813;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+    
+    .glass-nav {
+      background: rgba(11, 8, 19, 0.75);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 105, 180, 0.15);
+    }
+
+    .glass-card {
+      background: rgba(20, 15, 35, 0.55);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 105, 180, 0.15);
+      box-shadow: 0 8px 32px 0 rgba(255, 105, 180, 0.05);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(255, 105, 180, 0.4);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px 0 rgba(255, 105, 180, 0.15);
+    }
+
+    /* مخصصة لبتلات الورد المتساقطة */
+    #blossom-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+      overflow: hidden;
+    }
+
+    .petal {
+      position: absolute;
+      background: linear-gradient(135deg, #ffb6c1, #ff69b4);
+      border-radius: 150px 0px 150px 150px;
+      opacity: 0.7;
+      pointer-events: none;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translate(0, -10px) rotate(0deg);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translate(100px, 105vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* شريط التمرير المخصص */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0813;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(#ff69b4, #8a2be2);
+      border-radius: 10px;
+    }
+
+    /* وميض المؤشر */
+    .cursor-blink {
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body class="text-slate-200 antialiased font-sans">
+
+  <!-- تساقط بتلات الكرز الفنية -->
+  <div id="blossom-container"></div>
+
+  <!-- زر التحكم في البتلات لتجربة تفاعلية هادئة -->
+  <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+    <button onclick="togglePetals()" id="petal-control-btn" class="w-12 h-12 rounded-full bg-brand-pink text-white flex items-center justify-center shadow-lg shadow-pink-500/30 hover:scale-110 transition-transform active:scale-95" title="Toggle Magical Petals">
+      <i class="fa-solid fa-leaf text-lg"></i>
+    </button>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="glass-nav fixed top-0 left-0 w-full z-40 px-6 py-4 transition-all duration-300">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <a href="#" class="flex items-center gap-2 group">
+        <span class="text-2xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-pink via-brand-pastel to-brand-purple group-hover:opacity-80 transition-opacity">
+          Jana 🩷
+        </span>
+      </a>
+
+      <!-- الروابط الأساسية للملاحة -->
+      <div class="hidden md:flex items-center gap-8 font-medium">
+        <a href="#about" class="hover:text-brand-pink transition-colors text-slate-300">About Me</a>
+        <a href="#skills" class="hover:text-brand-pink transition-colors text-slate-300">Skills Radar</a>
+        <a href="#pipeline" class="hover:text-brand-pink transition-colors text-slate-300">Pipeline Demo</a>
+      </div>
+
+      <!-- وسائل التواصل المباشرة السريعة -->
+      <div class="flex items-center gap-4">
+        <a href="https://www.linkedin.com/in/jana-mohamed-b90bb8384" target="_blank" class="w-10 h-10 rounded-full border border-pink-500/30 flex items-center justify-center hover:bg-brand-pink/20 transition-all text-brand-pink hover:border-brand-pink">
+          <i class="fa-brands fa-linkedin-in"></i>
+        </a>
+        <a href="https://github.com/mjana6071-crypto" target="_blank" class="px-4 py-2 rounded-full bg-gradient-to-r from-brand-pink to-brand-purple text-white font-semibold text-sm hover:opacity-90 transition-opacity shadow-lg shadow-pink-500/20">
+          <i class="fa-brands fa-github mr-2"></i>GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center justify-center pt-24 px-6 overflow-hidden">
+    <!-- خلفيات فنية عائمة ومضيئة بألوان الباستيل والوردي -->
+    <div class="absolute top-1/4 left-1/10 w-72 h-72 bg-brand-pink/10 rounded-full blur-3xl animate-float-slow"></div>
+    <div class="absolute bottom-1/4 right-1/10 w-96 h-96 bg-brand-purple/10 rounded-full blur-3xl animate-float-delayed"></div>
+
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-20">
+      <!-- النصوص الترحيبية والمعلومات الفنية -->
+      <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-pink/10 border border-brand-pink/30 text-brand-pink text-sm font-semibold tracking-wide">
+          <span class="w-2 h-2 rounded-full bg-brand-pink animate-ping"></span>
+          Available for Awesome Roles 🚀
+        </div>
+        
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
+          Hi, I'm <span class="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-brand-pink via-brand-pastel to-brand-purple">Jana Mohamed</span> 🌸
+        </h1>
+
+        <p class="text-xl md:text-2xl text-slate-300 font-medium h-12">
+          I build <span id="typing-text" class="text-brand-pink font-semibold"></span><span class="cursor-blink text-brand-pink">|</span>
+        </p>
+
+        <p class="text-slate-400 max-w-xl mx-auto lg:mx-0 text-base md:text-lg leading-relaxed">
+          A passionate hybrid engineer balancing beautiful **Frontend magic** with robust **Data Engineering pipelines** and predictive **AI/ML models**. I orchestrate elegant data flow while maintaining pixel-perfect user experiences.
+        </p>
+
+        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-4">
+          <a href="https://github.com/mjana6071-crypto" target="_blank" class="px-8 py-4 rounded-xl bg-gradient-to-r from-brand-pink to-brand-purple text-white font-bold hover:shadow-xl hover:shadow-pink-500/20 hover:scale-105 transition-all flex items-center gap-3">
+            <i class="fa-brands fa-github text-xl"></i> Explore My GitHub Repos
+          </a>
+          <a href="#pipeline" class="px-8 py-4 rounded-xl bg-slate-900 border border-pink-500/20 text-slate-300 font-semibold hover:bg-slate-800 transition-all flex items-center gap-2">
+            Try My Pipeline Demo <i class="fa-solid fa-arrow-right text-brand-pink"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- صور جمالية للبرمجة بلمسة ناعمة بناتي كرتونية رائعة -->
+      <div class="lg:col-span-5 flex justify-center">
+        <div class="relative w-72 h-72 md:w-96 md:h-96 group">
+          <!-- خلفية مضيئة متوهجة -->
+          <div class="absolute inset-0 bg-gradient-to-tr from-brand-pink to-brand-purple rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
+          
+          <!-- الإطار الخارجي الزجاجي الأنيق -->
+          <div class="w-full h-full rounded-3xl overflow-hidden glass-card p-4 flex flex-col justify-between border border-brand-pink/30 relative z-10">
+            <div class="flex items-center justify-between border-b border-pink-500/10 pb-3">
+              <div class="flex gap-1.5">
+                <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                <span class="w-3 h-3 rounded-full bg-green-500"></span>
+              </div>
+              <span class="text-xs text-brand-pink/70 font-mono">jana_data_engineer.py</span>
+            </div>
+            
+            <!-- تمثيل كودي للبيانات والفرونت لزيادة الحيوية -->
+            <div class="font-mono text-sm space-y-3 py-4 text-left overflow-hidden">
+              <p class="text-purple-400">import <span class="text-pink-400">pandas</span> as <span class="text-cyan-400">pd</span></p>
+              <p class="text-purple-400">from <span class="text-pink-400">angular</span> import <span class="text-cyan-400">Component</span></p>
+              <p class="text-slate-500"># Elegant Data Engineering + Frontend UI</p>
+              <p class="text-pink-300">profile = {</p>
+              <p class="text-slate-300 pl-4">"name": <span class="text-emerald-400">"Jana Mohamed"</span>,</p>
+              <p class="text-slate-300 pl-4">"skills": [<span class="text-amber-400">"Angular"</span>, <span class="text-amber-400">"SQL"</span>, <span class="text-amber-400">"Spark"</span>],</p>
+              <p class="text-slate-300 pl-4">"passionate": <span class="text-cyan-400">True</span>,</p>
+              <p class="text-pink-300">}</p>
+              <p class="text-cyan-300">pipeline.run(clean=True, render_ui=True)</p>
+            </div>
+
+            <!-- صورة رمزية لطيفة للبرمجة -->
+            <div class="flex items-center gap-3 border-t border-pink-500/10 pt-3">
+              <div class="w-10 h-10 rounded-full bg-brand-pink/20 flex items-center justify-center text-brand-pink">
+                <i class="fa-solid fa-code"></i>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-slate-200">Interactive Dashboard Loaded</p>
+                <p class="text-[10px] text-green-400">● Live & Healthy Pipeline</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Me Section -->
+  <section id="about" class="py-24 px-6 relative">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center space-y-4 mb-16">
+        <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight">The Story Of <span class="font-serif italic text-brand-pink">Jana</span> 🩷</h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">Bridging the gap between front-end pixel beauty and complex, massive data operations.</p>
+        <div class="w-24 h-1 bg-gradient-to-r from-brand-pink to-brand-purple mx-auto rounded-full"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch">
+        <!-- رحلتي وتجربتي -->
+        <div class="glass-card p-8 rounded-3xl space-y-6 flex flex-col justify-between">
+          <div class="space-y-4">
+            <h3 class="text-2xl font-bold text-brand-pink flex items-center gap-3">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Dual-Force Engineering
+            </h3>
+            <p class="text-slate-300 leading-relaxed text-sm md:text-base">
+              I began my coding journey diving deep into frontend responsive systems and beautiful, highly reactive user interfaces with <strong class="text-pink-400">Angular</strong>. But as I explored further, I realized that beautiful interfaces need rich, dynamic, and powerful data to back them up!
+            </p>
+            <p class="text-slate-300 leading-relaxed text-sm md:text-base">
+              That's when I expanded my horizons into <strong class="text-purple-400">Data Engineering</strong> and <strong class="text-purple-400">AI/ML</strong>. Today, I don't just build UI; I design robust data orchestration, transform complex multi-million row datasets, and deliver them seamlessly to modern clients.
+            </p>
+          </div>
+          <div class="p-4 rounded-2xl bg-brand-pink/10 border border-brand-pink/20 text-brand-pink font-semibold text-center text-sm">
+             ⭐ "Continuous learning is the only algorithm for success"
+          </div>
+        </div>
+
+        <!-- المزيج الذهبي (كيف أعمل) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+            <div class="w-12 h-12 rounded-xl bg-pink-500/20 flex items-center justify-center text-brand-pink mb-4">
+              <i class="fa-solid fa-palette text-xl"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-lg text-slate-200 mb-1">Frontend Magic</h4>
+              <p class="text-slate-400 text-sm">Delivering reactive, clean, and interactive interfaces using Angular & Modern JS.</p>
+            </div>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+            <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-brand-purple mb-4">
+              <i class="fa-solid fa-database text-xl"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-lg text-slate-200 mb-1">Data Pipelines</h4>
+              <p class="text-slate-400 text-sm">Creating robust ETL architectures, database schemas, and optimized SQL pipelines.</p>
+            </div>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4">
+              <i class="fa-solid fa-brain text-xl"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-lg text-slate-200 mb-1">AI & Analytics</h4>
+              <p class="text-slate-400 text-sm">Transforming raw databases into smart predictive metrics & visualizations.</p>
+            </div>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+            <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-400 mb-4">
+              <i class="fa-solid fa-link text-xl"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-lg text-slate-200 mb-1">Full-Stack Sync</h4>
+              <p class="text-slate-400 text-sm">Bridging frontend components directly with backend data streams smoothly.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Universe Section -->
+  <section id="skills" class="py-24 px-6 bg-brand-dark/40 relative">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center space-y-4 mb-16">
+        <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight">The Tech <span class="font-serif italic text-brand-pink">Universe</span> 🌌</h2>
+        <p class="text-slate-400 max-w-xl mx-auto">Interactive look into the tools, languages, and frameworks I use on a daily basis.</p>
+        <div class="w-24 h-1 bg-gradient-to-r from-brand-pink to-brand-purple mx-auto rounded-full"></div>
+      </div>
+
+      <!-- نظام التصنيفات التفاعلي للمهارات -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Frontend Card -->
+        <div class="glass-card p-6 rounded-3xl space-y-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-pink-500/20 flex items-center justify-center text-brand-pink">
+              <i class="fa-solid fa-laptop-code"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-200">Frontend & UI</h3>
+          </div>
+          <div class="space-y-4">
+            <!-- Skill Bar -->
+            <div>
+              <div class="flex justify-between text-sm font-medium mb-1.5">
+                <span class="text-slate-300">Angular & TypeScript</span>
+                <span class="text-brand-pink">90%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-brand-pink to-pink-400 rounded-full" style="width: 90%"></div>
+              </div>
+            </div>
+            <!-- Skill Bar -->
+            <div>
+              <div class="flex justify-between text-sm font-medium mb-1.5">
+                <span class="text-slate-300">JavaScript (ES6+)</span>
+                <span class="text-brand-pink">95%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-brand-pink to-pink-400 rounded-full" style="width: 95%"></div>
+              </div>
+            </div>
+            <!-- Skill Bar -->
+            <div>
+              <div class="flex justify-between text-sm font-medium mb-1.5">
+                <span class="text-slate-300">HTML5 & CSS3 (Tailwind)</span>
+                <span class="text-brand-pink">92%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-brand-pink to-pink-400 rounded-full" style="width: 92%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2 pt-2 border-t border-pink-500/10">
+            <span class="text-xs px-2.5 py-1 rounded-full bg-pink-500/10 text-brand-pink border border-brand-pink/20">Reactive Forms</span>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-pink-500/10 text-brand-pink border border-brand-pink/20">RxJS</span>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-pink-500/10 text-brand-pink border border-brand-pink/20">UI Design</span>
+          </div>
+        </div>
+
+        <!-- Data Engineering Card -->
+        <div class="glass-card p-6 rounded-3xl space-y-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center text-brand-purple">
+              <i class="fa-solid fa-cubes"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-200">Data Engineering</h3>
+          </div>
+          <div class="space-y-4">
+            <!-- Skill Bar -->
+            <div>
+              <div class="flex justify-between text-sm font-medium mb-1.5">
+                <span class="text-slate-300">SQL Server & ETL Processes</span>
+                <span class="text-brand-purple">88%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-brand-purple to-purple-400 rounded-full" style="width: 88%"></div>
+              </div>
+            </div>
+            <!-- Skill Bar -->
+            <div>
+              <div class="flex justify-between text-sm font-medium mb-1.5">
+                <span class="text-slate-300">Power BI & Excel Dashboards</span>
+                <span class="text-brand-purple">92%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-brand-purple to-purple-400 rounded-full" style="width: 92%"></div>
+              </div>
+            </div>
+            <!-- Skill Bar -->
+            <div>
+              <div class="flex justify-between text-sm font-medium mb-1.5">
+                <span class="text-slate-300">Tableau Analytics</span>
+                <span class="text-brand-purple">85%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-brand-purple to-purple-400 rounded-full" style="width: 85%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2 pt-2 border-t border-purple-500/10">
+            <span class="text-xs px-2.5 py-1 rounded-full bg-purple-500/10 text-brand-purple border border-brand-purple/20">Data Modeling</span>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-purple-500/10 text-brand-purple border border-brand-purple/20">Data Warehousing</span>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-purple-500/10 text-brand-purple border border-brand-purple/20">Query Optimization</span>
+          </div>
+        </div>
+
+        <!-- AI & Machine Learning Card -->
+        <div class="glass-card p-6 rounded-3xl space-y-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <i class="fa-solid fa-brain"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-200">AI & Machine Learning</h3>
+          </div>
+          <div class="space-y-4">
+            <!-- Skill Bar -->
+            <div>
+              <div class="flex justify-between text-sm font-medium mb-1.5">
+                <span class="text-slate-300">Python Programming</span>
+                <span class="text-emerald-400">92%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full" style="width: 92%"></div>
+              </div>
+            </div>
+            <!-- Skill Bar -->
+            <div>
+              <div class="flex justify-between text-sm font-medium mb-1.5">
+                <span class="text-slate-300">Pandas & NumPy EDA</span>
+                <span class="text-emerald-400">90%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full" style="width: 90%"></div>
+              </div>
+            </div>
+            <!-- Skill Bar -->
+            <div>
+              <div class="flex justify-between text-sm font-medium mb-1.5">
+                <span class="text-slate-300">Scikit-Learn ML Models</span>
+                <span class="text-emerald-400">83%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full" style="width: 83%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2 pt-2 border-t border-emerald-500/10">
+            <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Regression</span>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Clustering</span>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Statistical Modeling</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Data Pipeline Simulator (Highly Active Sandbox) -->
+  <section id="pipeline" class="py-24 px-6 relative overflow-hidden">
+    <!-- خلفية خفيفة متوهجة -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-brand-pink/5 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center space-y-4 mb-16">
+        <span class="px-3 py-1 rounded-full bg-brand-purple/20 border border-brand-purple/30 text-brand-purple text-xs font-bold uppercase tracking-wider">Playground Demo</span>
+        <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight">Interactive <span class="font-serif italic text-brand-pink">Pipeline</span> Simulator ⚙️</h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">See Jana's data skills in real action! Run this mockup ETL pipeline to load raw client data, process it in SQL, apply predictions, and render a dashboard.</p>
+        <div class="w-24 h-1 bg-gradient-to-r from-brand-pink to-brand-purple mx-auto rounded-full"></div>
+      </div>
+
+      <!-- لوحة التحكم في البايبلاين -->
+      <div class="glass-card rounded-3xl p-6 md:p-10 relative overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          <!-- خطوات خط البيانات -->
+          <div class="lg:col-span-8 space-y-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-brand-dark/60 border border-pink-500/10 relative">
+              
+              <!-- الخطوات البصرية -->
+              <div id="step-1" class="flex items-center gap-3 w-full md:w-1/4 opacity-40 transition-opacity duration-300">
+                <div class="w-10 h-10 rounded-full bg-pink-500/20 flex items-center justify-center text-brand-pink font-bold border border-brand-pink/30">1</div>
+                <div>
+                  <h4 class="text-sm font-bold text-slate-200">Raw Source</h4>
+                  <p class="text-[10px] text-slate-400">CSV, JSON files</p>
+                </div>
+              </div>
+
+              <!-- سهم -->
+              <div class="hidden md:block text-slate-600"><i class="fa-solid fa-chevron-right"></i></div>
+
+              <div id="step-2" class="flex items-center gap-3 w-full md:w-1/4 opacity-40 transition-opacity duration-300">
+                <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-brand-purple font-bold border border-brand-purple/30">2</div>
+                <div>
+                  <h4 class="text-sm font-bold text-slate-200">SQL Cleansing</h4>
+                  <p class="text-[10px] text-slate-400">De-duping & Casting</p>
+                </div>
+              </div>
+
+              <!-- سهم -->
+              <div class="hidden md:block text-slate-600"><i class="fa-solid fa-chevron-right"></i></div>
+
+              <div id="step-3" class="flex items-center gap-3 w-full md:w-1/4 opacity-40 transition-opacity duration-300">
+                <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold border border-emerald-400/30">3</div>
+                <div>
+                  <h4 class="text-sm font-bold text-slate-200">ML Scoring</h4>
+                  <p class="text-[10px] text-slate-400">Classifying models</p>
+                </div>
+              </div>
+
+              <!-- سهم -->
+              <div class="hidden md:block text-slate-600"><i class="fa-solid fa-chevron-right"></i></div>
+
+              <div id="step-4" class="flex items-center gap-3 w-full md:w-1/4 opacity-40 transition-opacity duration-300">
+                <div class="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold border border-cyan-400/30">4</div>
+                <div>
+                  <h4 class="text-sm font-bold text-slate-200">Dashboard Render</h4>
+                  <p class="text-[10px] text-slate-400">Angular UI update</p>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- شريط تقدم كلي ومؤشرات حالة تفاعلية -->
+            <div class="space-y-2">
+              <div class="flex justify-between text-xs font-mono text-slate-400">
+                <span>SYSTEM STATUS: <strong id="system-status-lbl" class="text-amber-400">IDLE</strong></span>
+                <span id="pipeline-progress-lbl">0%</span>
+              </div>
+              <div class="w-full h-3 bg-brand-dark rounded-full overflow-hidden p-[2px] border border-pink-500/10">
+                <div id="pipeline-progress-bar" class="h-full bg-gradient-to-r from-brand-pink via-brand-purple to-cyan-400 rounded-full transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- سجل مخرجات العملية (Logs) -->
+            <div class="h-32 rounded-xl bg-brand-dark/80 p-4 border border-pink-500/10 font-mono text-xs overflow-y-auto space-y-1 text-slate-300" id="pipeline-logs">
+              <span class="text-slate-500">> Ready to run the pipeline orchestration... Click 'Run Pipeline Trigger' to begin.</span>
+            </div>
+          </div>
+
+          <!-- بطاقة تشغيل تفاعلية والـ UI النهائي -->
+          <div class="lg:col-span-4 text-center space-y-6">
+            <button onclick="triggerPipeline()" id="trigger-btn" class="w-full py-5 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-purple text-white font-extrabold text-lg shadow-lg shadow-pink-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3">
+              <i class="fa-solid fa-play"></i> Run Pipeline Trigger
+            </button>
+
+            <!-- لوحة تحكم مصغرة تظهر بعد النجاح -->
+            <div class="glass-card p-4 rounded-2xl border border-pink-500/10 text-left space-y-3" id="mock-dashboard">
+              <span class="text-[10px] text-slate-500 font-mono">ANGULAR DASHBOARD PREVIEW</span>
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-slate-200">Total Rows Loaded</span>
+                <span class="text-sm font-extrabold text-brand-pink" id="metric-rows">0</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-slate-200">Data Cleanness Rate</span>
+                <span class="text-sm font-extrabold text-brand-purple" id="metric-clean">0%</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-slate-200">Prediction Accuracy</span>
+                <span class="text-sm font-extrabold text-emerald-400" id="metric-acc">0%</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GitHub Spotlights (Direct Showcase to GitHub Portfolio) -->
+  <section class="py-24 px-6 relative">
+    <div class="max-w-6xl mx-auto text-center space-y-12">
+      <div class="space-y-4">
+        <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight">Active on <span class="font-serif italic text-brand-pink">GitHub</span> 🌸</h2>
+        <p class="text-slate-400 max-w-xl mx-auto">All my real-world projects, data engineering pipelines, dynamic dashboard work, and frontend applications are fully hosted on GitHub.</p>
+        <div class="w-24 h-1 bg-gradient-to-r from-brand-pink to-brand-purple mx-auto rounded-full"></div>
+      </div>
+
+      <!-- كارد مبهر يحفز مسؤول التوظيف على زيارة الـ GitHub -->
+      <div class="glass-card max-w-3xl mx-auto rounded-3xl p-8 md:p-12 relative overflow-hidden group">
+        <div class="absolute -right-16 -bottom-16 w-48 h-48 bg-brand-pink/10 rounded-full blur-3xl group-hover:bg-brand-pink/20 transition-all"></div>
+        
+        <div class="space-y-6 relative z-10">
+          <div class="w-20 h-20 rounded-full bg-pink-500/20 flex items-center justify-center text-brand-pink mx-auto mb-6 text-4xl shadow-inner border border-brand-pink/30">
+            <i class="fa-brands fa-github-alt"></i>
+          </div>
+          
+          <h3 class="text-2xl font-bold text-slate-200">Explore My Repositories & Real Data Pipelines</h3>
+          
+          <p class="text-slate-400 max-w-xl mx-auto text-sm md:text-base leading-relaxed">
+            I host interactive data flow scripts, SQL transformation pipelines, predictive analysis notebooks (Scikit-Learn/Pandas), and full Angular client architectures directly on my profile.
+          </p>
+
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <a href="https://github.com/mjana6071-crypto" target="_blank" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-pink via-brand-pastel to-brand-purple text-white font-extrabold hover:scale-105 hover:shadow-lg hover:shadow-pink-500/20 transition-all flex items-center gap-2">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Visit @mjana6071-crypto
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Get In Touch Form -->
+  <section class="py-24 px-6 bg-brand-dark/40 relative">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center space-y-4 mb-16">
+        <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight">Let's Craft <span class="font-serif italic text-brand-pink">Magic</span> Together ✨</h2>
+        <p class="text-slate-400">Whether you want to discuss a data architecture, collaborate on a project, or just say hi!</p>
+        <div class="w-24 h-1 bg-gradient-to-r from-brand-pink to-brand-purple mx-auto rounded-full"></div>
+      </div>
+
+      <div class="glass-card rounded-3xl p-8 md:p-12 border border-pink-500/10">
+        <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-6 text-left">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label for="name" class="text-xs font-bold text-slate-300 tracking-wider uppercase">Your Name 🩷</label>
+              <input type="text" id="name" required class="w-full px-5 py-4 rounded-xl bg-brand-dark/60 border border-pink-500/20 focus:border-brand-pink outline-none text-slate-200 transition-colors" placeholder="e.g. Sarah">
+            </div>
+            <div class="space-y-2">
+              <label for="email" class="text-xs font-bold text-slate-300 tracking-wider uppercase">Your Email 📧</label>
+              <input type="email" id="email" required class="w-full px-5 py-4 rounded-xl bg-brand-dark/60 border border-pink-500/20 focus:border-brand-pink outline-none text-slate-200 transition-colors" placeholder="e.g. sarah@company.com">
+            </div>
+          </div>
+          <div class="space-y-2">
+            <label for="message" class="text-xs font-bold text-slate-300 tracking-wider uppercase">Message 🌸</label>
+            <textarea id="message" rows="5" required class="w-full px-5 py-4 rounded-xl bg-brand-dark/60 border border-pink-500/20 focus:border-brand-pink outline-none text-slate-200 transition-colors" placeholder="Tell me about your amazing opportunities or questions..."></textarea>
+          </div>
+          
+          <button type="submit" id="submit-btn" class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-pink to-brand-purple text-white font-extrabold hover:scale-[1.01] active:scale-95 hover:shadow-lg hover:shadow-pink-500/20 transition-all flex items-center justify-center gap-2">
+            <i class="fa-regular fa-paper-plane"></i> Send Magical Message
+          </button>
+        </form>
+
+        <!-- نافذة نجاح مخصصة عند إرسال الرسالة -->
+        <div id="form-success-alert" class="hidden mt-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-center font-semibold text-sm">
+          🎉 Awesome! Your message has been routed successfully. I will get back to you soon!
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 px-6 border-t border-pink-500/10 text-center space-y-6">
+    <span class="text-xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-pink to-brand-purple">
+      Jana Mohamed 🩷
+    </span>
+    <p class="text-slate-500 text-xs">
+      &copy; 2026 Jana. Engineered with premium frontend magic & pure data intelligence.
+    </p>
+  </footer>
+
+  <!-- الأكواد البرمجية والتفاعلية للبورتفوليو -->
+  <script>
+    // 1. تأثير الكتابة التلقائية التفاعلي في الهيرو
+    const words = ["Frontend Magic. ✨", "Optimized Data Pipelines. ⚙️", "Machine Learning Models. 🧠"];
+    let i = 0;
+    let timer;
+
+    function typingEffect() {
+      if (!document.getElementById('typing-text')) return;
+      let word = words[i].split("");
+      var loopTyping = function() {
+        if (word.length > 0) {
+          document.getElementById('typing-text').innerHTML += word.shift();
+        } else {
+          setTimeout(deletingEffect, 2000);
+          return false;
+        }
+        timer = setTimeout(loopTyping, 100);
+      };
+      loopTyping();
+    }
+
+    function deletingEffect() {
+      let word = words[i].split("");
+      var loopDeleting = function() {
+        if (word.length > 0) {
+          word.pop();
+          document.getElementById('typing-text').innerHTML = word.join("");
+        } else {
+          if (words.length > (i + 1)) {
+            i++;
+          } else {
+            i = 0;
+          }
+          setTimeout(typingEffect, 500);
+          return false;
+        }
+        timer = setTimeout(loopDeleting, 60);
+      };
+      loopDeleting();
+    }
+
+    typingEffect();
+
+    // 2. التحكم في بتلات الكرز المتساقطة
+    let petalsEnabled = true;
+    const container = document.getElementById('blossom-container');
+
+    function createPetal() {
+      if (!petalsEnabled) return;
+      const petal = document.createElement('div');
+      petal.classList.add('petal');
+      petal.style.left = Math.random() * 100 + 'vw';
+      petal.style.width = Math.random() * 12 + 8 + 'px';
+      petal.style.height = Math.random() * 12 + 8 + 'px';
+      
+      // زمن السقوط العشوائي
+      const duration = Math.random() * 6 + 5;
+      petal.style.animationDuration = duration + 's';
+      
+      container.appendChild(petal);
+
+      // تنظيف الذاكرة بعد انتهاء الأنيميشن
+      setTimeout(() => {
+        petal.remove();
+      }, duration * 1000);
+    }
+
+    // توليد بتلات جديدة باستمرار
+    setInterval(createPetal, 400);
+
+    function togglePetals() {
+      petalsEnabled = !petalsEnabled;
+      const btn = document.getElementById('petal-control-btn');
+      if (petalsEnabled) {
+        btn.innerHTML = '<i class="fa-solid fa-leaf text-lg"></i>';
+        btn.classList.remove('bg-slate-700');
+        btn.classList.add('bg-brand-pink');
+      } else {
+        container.innerHTML = '';
+        btn.innerHTML = '<i class="fa-solid fa-eye-slash text-lg"></i>';
+        btn.classList.remove('bg-brand-pink');
+        btn.classList.add('bg-slate-700');
+      }
+    }
+
+    // 3. محاكي خطوط البيانات التفاعلي (Pipeline Simulation)
+    let isPipelineRunning = false;
+    const logs = document.getElementById('pipeline-logs');
+    const progressBar = document.getElementById('pipeline-progress-bar');
+    const progressLbl = document.getElementById('pipeline-progress-lbl');
+    const statusLbl = document.getElementById('system-status-lbl');
+    const triggerBtn = document.getElementById('trigger-btn');
+
+    function addLog(text, type = "info") {
+      const p = document.createElement('p');
+      let color = "text-slate-300";
+      if (type === "success") color = "text-green-400";
+      if (type === "warn") color = "text-yellow-400";
+      if (type === "error") color = "text-rose-500";
+      if (type === "step") color = "text-cyan-400";
+
+      p.className = `${color} leading-relaxed`;
+      p.innerHTML = `> ${text}`;
+      logs.appendChild(p);
+      logs.scrollTop = logs.scrollHeight;
+    }
+
+    function triggerPipeline() {
+      if (isPipelineRunning) return;
+      isPipelineRunning = true;
+      triggerBtn.disabled = true;
+      triggerBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      // تصفير القيم
+      progressBar.style.width = '0%';
+      progressLbl.innerText = '0%';
+      statusLbl.innerText = "RUNNING";
+      statusLbl.className = "text-brand-pink animate-pulse";
+      logs.innerHTML = '';
+
+      document.getElementById('metric-rows').innerText = '0';
+      document.getElementById('metric-clean').innerText = '0%';
+      document.getElementById('metric-acc').innerText = '0%';
+
+      // تصفير شفافية الخطوات
+      document.getElementById('step-1').classList.add('opacity-40');
+      document.getElementById('step-2').classList.add('opacity-40');
+      document.getElementById('step-3').classList.add('opacity-40');
+      document.getElementById('step-4').classList.add('opacity-40');
+
+      // الخطوة 1: جلب البيانات
+      setTimeout(() => {
+        document.getElementById('step-1').classList.remove('opacity-40');
+        document.getElementById('step-1').classList.add('opacity-100');
+        addLog("Initializing raw data connection to AWS S3 bucket...", "step");
+        addLog("Loading 5,420 raw user feedback records in JSON format.", "info");
+        progressBar.style.width = '25%';
+        progressLbl.innerText = '25%';
+      }, 1000);
+
+      // الخطوة 2: المعالجة والتنظيف في SQL
+      setTimeout(() => {
+        document.getElementById('step-2').classList.remove('opacity-40');
+        document.getElementById('step-2').classList.add('opacity-100');
+        addLog("Processing loaded records in SQL Server...", "step");
+        addLog("Running: CAST(user_id AS INT) & duplicates de-duping queries.", "info");
+        addLog("Success: Deduplicated 140 entries with bad telemetry.", "success");
+        progressBar.style.width = '50%';
+        progressLbl.innerText = '50%';
+        document.getElementById('metric-rows').innerText = '5,280';
+        document.getElementById('metric-clean').innerText = '99.2%';
+      }, 3000);
+
+      // الخطوة 3: التنبؤ والـ ML
+      setTimeout(() => {
+        document.getElementById('step-3').classList.remove('opacity-40');
+        document.getElementById('step-3').classList.add('opacity-100');
+        addLog("Passing cleaned SQL metrics to Scikit-Learn classifier...", "step");
+        addLog("Applying Random Forest prediction pipeline on sentiment data.", "info");
+        addLog("Model score calculated successfully.", "success");
+        progressBar.style.width = '75%';
+        progressLbl.innerText = '75%';
+        document.getElementById('metric-acc').innerText = '87.4%';
+      }, 5000);
+
+      // الخطوة 4: العرض على الـ UI بالفرونت إند
+      setTimeout(() => {
+        document.getElementById('step-4').classList.remove('opacity-40');
+        document.getElementById('step-4').classList.add('opacity-100');
+        addLog("Building Angular custom visualization view elements...", "step");
+        addLog("Rendering live reactive charts to dashboard nodes.", "info");
+        addLog("Pipeline completed flawlessly! Everything is green. 🌸", "success");
+        progressBar.style.width = '100%';
+        progressLbl.innerText = '100%';
+        
+        statusLbl.innerText = "SUCCESS";
+        statusLbl.className = "text-green-400";
+        
+        isPipelineRunning = false;
+        triggerBtn.disabled = false;
+        triggerBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }, 7000);
+    }
+
+    // 5. إرسال حقيقي لنموذج التواصل (Form Submission via FormSubmit AJAX)
+    function handleContactSubmit(event) {
+      event.preventDefault();
+      
+      const successAlert = document.getElementById('form-success-alert');
+      const form = document.getElementById('contact-form');
+      const submitBtn = document.getElementById('submit-btn');
+
+      // 🛑 السطر الهام: بريدك الإلكتروني الحقيقي لتستقبلي عليه الرسائل!
+      const targetEmail = "jana.mohamed.b90bb8384@gmail.com"; 
+
+      // تغيير مظهر الزر أثناء الإرسال لإعطاء طابع تفاعلي ممتاز
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Sending Sparkles...';
+
+      // إرسال البيانات بشكل آمن ومجاني بدون تحميل الصفحة
+      fetch(`https://formsubmit.co/ajax/${targetEmail}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify({
+            Name: document.getElementById('name').value,
+            Email: document.getElementById('email').value,
+            Message: document.getElementById('message').value
+        })
+      })
+      .then(response => {
+        if (response.ok) {
+          // إظهار نافذة النجاح الرائعة
+          successAlert.classList.remove('hidden');
+          form.reset();
+        } else {
+          alert("Oops! Something went wrong. Please try again.");
+        }
+      })
+      .catch(error => {
+        console.error("Error submitting form:", error);
+        alert("Could not connect to the email server. Check your internet connection.");
+      })
+      .finally(() => {
+        // إعادة الزر لشكله الطبيعي
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-regular fa-paper-plane"></i> Send Magical Message';
+        
+        // إخفاء التنبيه بعد 6 ثوانٍ
+        setTimeout(() => {
+          successAlert.classList.add('hidden');
+        }, 6000);
+      });
+    }
+  </script>
+</body>
+</html>
